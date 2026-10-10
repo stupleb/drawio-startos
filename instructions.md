@@ -15,8 +15,10 @@
 
 ## Getting set up
 
-1. Open the **Web UI**. The editor starts on a blank diagram.
-2. Before you rely on it, decide where your diagrams will live. Use **File → Save
+1. Run the **Set Primary URL** task StartOS shows after install, to choose the address
+   that goes into share links and exported files (see **Sharing and exporting** below).
+2. Open the **Web UI**. The editor starts on a blank diagram.
+3. Before you rely on it, decide where your diagrams will live. Use **File → Save
    as…** and pick a place under **Where**:
    - **Device** saves a `.drawio` file to a folder you choose, and keeps saving to
      it. Any folder your computer can see works, including a mounted network share.
@@ -32,10 +34,10 @@
 ### Sharing and exporting
 
 **File → Publish → Link…**, **File → Export as → HTML…** and **File → Embed** all
-produce links or files that load from your server's **primary URL** — the `.local`
-address, unless you change it. People who open them need to reach that address. If
-they open them over a VPN or through a domain instead, run **Set Primary URL** and
-choose an address that works for them. Links and files you made earlier keep the
+produce links or files that load from draw.io's **primary URL**, the address you
+chose with **Set Primary URL**. People who open them need to reach that address. If
+they open them over a VPN or through a domain instead, run **Set Primary URL** again
+and choose an address that works for them. Links and files you made earlier keep the
 address they were made with.
 
 ### Using it from Nextcloud
@@ -59,8 +61,9 @@ your device is in dark mode.
 This action chooses which of draw.io's addresses goes into share links, HTML exports
 and embed code. If draw.io is running, it restarts, which takes a few seconds; if a
 browser that already had draw.io open still uses the old address, reload the page.
-If the chosen address stops existing, for example after you disable it, StartOS asks
-you to pick a new one, and draw.io keeps working meanwhile.
+If the chosen address stops existing, for example after you disable it, draw.io uses
+its public domain if it has one, otherwise its `.local` address, until the chosen one
+returns, and StartOS asks you to pick a new one.
 
 ## Limitations
 

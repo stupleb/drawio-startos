@@ -11,14 +11,14 @@ const dict = {
   'Web UI': 4,
   'The draw.io diagram editor': 5,
 
-  // actions/setPrimaryUrl.ts
+  // primaryUrl.ts
   'Primary URL': 6,
   'Pick an address that everyone who opens your exported files and links can reach.': 7,
   'Set Primary URL': 8,
   "Choose which of draw.io's addresses to write into HTML exports, embed code and share links. A running draw.io restarts to apply it.": 9,
 
-  // init/watchPrimaryUrl.ts
-  'The address used for exported files and share links is no longer available. Choose a new primary URL.': 10,
+  // init/primaryUrlTask.ts
+  'Choose the address draw.io writes into share links, HTML exports and embed code.': 10,
 } as const
 
 /**

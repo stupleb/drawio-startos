@@ -60,9 +60,9 @@ the entrypoint's printout of both startup scripts.
 
 The package has one small volume, and it holds no diagram.
 
-| Volume    | Mount point | Contents                         |
-| --------- | ----------- | -------------------------------- |
-| `startos` | not mounted | `store.json`: the primary URL    |
+| Volume    | Mount point | Contents                      |
+| --------- | ----------- | ----------------------------- |
+| `startos` | not mounted | `store.json`: the primary URL |
 
 Diagrams live wherever each user saves them: on their own device, in their browser's
 storage for that address, or in Nextcloud when opened through its draw.io app. There
@@ -72,15 +72,19 @@ is no database, and the draw.io container mounts no volume at all.
 
 One JSON file, written only by the package, never by draw.io.
 
-**`store.json`** (`startos` volume) holds `primaryUrl`. Init sets it on install; the
-Set Primary URL action rewrites it. It reaches draw.io as environment variables, read
-on every start:
+**`store.json`** (`startos` volume) holds `primaryUrl`, the address chosen with Set
+Primary URL, empty until one is chosen. draw.io uses that address at its hostname's
+current port and scheme. While the hostname is not one of the Web UI's addresses, or
+nothing is chosen, it uses the preferred address instead: a public domain (HTTPS
+first), else the `.local` address, else the first. The choice is kept, so draw.io
+returns to it when the address does. Whenever the address in use changes, draw.io
+restarts to pick it up. It reaches draw.io as environment variables:
 
-| Variable              | Value                                                                                  |
-| --------------------- | -------------------------------------------------------------------------------------- |
-| `DRAWIO_SERVER_URL`   | Always `/`. Keeps the editor's own requests relative, so it works from every address   |
-| `DRAWIO_BASE_URL`     | `primaryUrl`, trailing slash removed. Used in HTML exports, embed code and editor links |
-| `DRAWIO_LIGHTBOX_URL` | `primaryUrl`. Used for viewer links (File → Publish → Link…)                           |
+| Variable              | Value                                                                                |
+| --------------------- | ------------------------------------------------------------------------------------ |
+| `DRAWIO_SERVER_URL`   | Always `/`. Keeps the editor's own requests relative, so it works from every address |
+| `DRAWIO_BASE_URL`     | The address in use. Used in HTML exports, embed code and editor links                |
+| `DRAWIO_LIGHTBOX_URL` | The address in use. Used for viewer links (File → Publish → Link…)                   |
 
 `DRAWIO_SERVER_URL` must stay set: given only `DRAWIO_BASE_URL`, the upstream
 entrypoint derives an absolute server URL from it, and the editor then sends its own
@@ -106,8 +110,8 @@ The package exposes one HTTP interface. The server has no login: anyone who can
 reach an address can use the editor, though there is nothing stored for them to
 read.
 
-| Interface | ID   | Type | Port | Protocol | Serves                                                                                                                                                                  |
-| --------- | ---- | ---- | ---- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Interface | ID   | Type | Port | Protocol | Serves                                                                                                                                                                      |
+| --------- | ---- | ---- | ---- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Web UI    | `ui` | `ui` | 8080 | HTTP     | The editor; the viewer behind share links (`/?lightbox=1`); the viewer script HTML exports load (`/js/viewer-static.min.js`); the embed mode Nextcloud frames (`/?embed=1`) |
 
 Tomcat's HTTPS port, 8443, is not exposed. Two upstream endpoints fetch URLs
@@ -118,31 +122,31 @@ private, loopback, link-local and `.local` ones.
 ## Installation and First-Run Flow
 
 There is no setup wizard and no account to create; the editor is usable as soon as
-the service starts. On install, init sets the primary URL to the interface's `.local`
-address, or to its first off-box address when there is no `.local` one.
+the service starts. Install stores no primary URL: draw.io uses the preferred address
+(see File Models), and the Set Primary URL task asks the user to choose one.
 
 ## Actions
 
 The package has one action. It can run while the service is running or stopped; a
 running draw.io restarts to apply it, which takes a few seconds.
 
-**Set Primary URL** (`set-primary-url`) — run it when people open exported files and
-share links from somewhere the current address does not reach, typically over a VPN
-or a domain rather than the LAN. It rewrites `primaryUrl` in `store.json`, which
-restarts a running draw.io. Its form pre-fills the current address only while that
-address still exists, so from the task it opens on the default instead. Links and
+**Set Primary URL** (`set-primary-url`), built by `sdk.setupPrimaryUrl` — run it when
+people open exported files and share links from somewhere the current address does not
+reach, typically over a VPN or a domain rather than the LAN. It offers the Web UI's
+off-box addresses, pre-selects the preferred one and pre-fills the stored choice. It
+rewrites `primaryUrl` in `store.json`, which restarts a running draw.io. Links and
 files exported earlier keep the address they were made with. Safe to repeat.
 
 ## Tasks
 
 The package raises one task, and it never blocks the service.
 
-**Set Primary URL**, severity `important`. Init raises it when the stored primary
-URL is no longer one of the Web UI's addresses: the address was disabled, a domain
-was removed, or a backup was restored onto a server with a different name. Running
-Set Primary URL clears it, and so does the chosen address coming back. It returns
-whenever the chosen address disappears again.
-While it is raised, draw.io keeps running; exports simply carry the dead address.
+**Set Primary URL**, severity `important`. Init raises it while no primary URL is
+chosen, as after install, and while the chosen one's hostname is not one of the Web
+UI's addresses: the address was disabled, a domain was removed, a backup was restored
+onto a server with a different name, or an IP address's network link is down. Choosing
+an address clears it, and so does the chosen address coming back. While it is raised,
+draw.io keeps running on the preferred address.
 
 ## Health Checks
 
@@ -161,7 +165,8 @@ URL.
 A backup contains no diagrams, because the server never has any. Users' diagrams
 must be backed up wherever they save them — their devices, or Nextcloud. After a
 restore onto a server with a different name, the stored primary URL no longer
-matches any address and the task above asks for a new one.
+matches any address: draw.io uses the preferred address, and the task above asks for
+a new one.
 
 ## Limitations and Differences
 
@@ -187,8 +192,8 @@ listed because the hosted draw.io at app.diagrams.net behaves differently.
 5. **No login.** Anyone who can reach one of its addresses can use the editor.
 6. **A new primary URL can lag in an open browser.** The startup scripts are served
    without cache headers, so a browser that loaded draw.io recently may keep
-   exporting with the old address after the action restarts the service. Reloading
-   the page fetches the new one.
+   exporting with the old address after it changes. Reloading the page fetches the
+   new one.
 7. **URL proxy off.** With `/proxy` disabled, importing an image by URL from a site
    that does not allow cross-origin requests fails; downloading it and inserting the
    file works.
@@ -216,7 +221,7 @@ interfaces:
 actions:
   - set-primary-url
 tasks:
-  - { action: set-primary-url, severity: important }
+  - { action: set-primary-url, severity: important } # while unset or not a Web UI address
 health_checks:
   - primary
 ```

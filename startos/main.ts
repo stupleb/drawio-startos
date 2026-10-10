@@ -1,20 +1,18 @@
-import { storeJson } from './fileModels/store.json'
 import { i18n } from './i18n'
+import { primaryUrl } from './primaryUrl'
 import { sdk } from './sdk'
 import { uiPort } from './utils'
 
 export const main = sdk.setupMain(async ({ effects }) => {
   console.info(i18n('Starting draw.io!'))
 
-  const primaryUrl = (
-    await storeJson.read((s) => s.primaryUrl).const(effects)
-  )?.replace(/\/+$/, '')
+  const baseUrl = await primaryUrl.bestUsable(effects).const()
 
   // Without it the entrypoint derives an absolute server URL from DRAWIO_BASE_URL.
   const env: Record<string, string> = { DRAWIO_SERVER_URL: '/' }
-  if (primaryUrl) {
-    env.DRAWIO_BASE_URL = primaryUrl
-    env.DRAWIO_LIGHTBOX_URL = primaryUrl
+  if (baseUrl) {
+    env.DRAWIO_BASE_URL = baseUrl
+    env.DRAWIO_LIGHTBOX_URL = baseUrl
   }
 
   return sdk.Daemons.of(effects).addDaemon('primary', {
