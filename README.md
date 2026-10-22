@@ -35,12 +35,14 @@ affiliated with or endorsed by draw.io Ltd, which owns the draw.io name and logo
 
 ## Image and Container Runtime
 
-The package runs draw.io's official image unmodified, with its own entrypoint, in one
-subcontainer.
+The package runs draw.io's official image, with its own entrypoint, in one
+subcontainer. The root `Dockerfile` upgrades its CA store and rebuilds Java's `cacerts`
+from it, a temporary layer that comes out once upstream ships an image whose Java no
+longer trusts emSign ECC Root CA - G3.
 
 | Property      | Value                                                            |
 | ------------- | ---------------------------------------------------------------- |
-| Image         | `jgraph/drawio`, upstream, unmodified                            |
+| Image         | `jgraph/drawio`, upstream, plus the CA-store layer               |
 | Architectures | x86_64, aarch64                                                  |
 | Entrypoint    | upstream `docker-entrypoint.sh`, then Tomcat (`catalina.sh run`) |
 | User          | the image's `tomcat` user                                        |

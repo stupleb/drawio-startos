@@ -32,8 +32,8 @@ a rebuild of the same version picks up the newer bytes.
 
 ## Applying the bump
 
-1. Set `images.drawio.source.dockerTag` in `startos/manifest/index.ts` to
-   `jgraph/drawio:X.Y.Z`.
+1. Set the `IMAGE` build arg of `images.drawio.source.dockerBuild` in
+   `startos/manifest/index.ts` to `jgraph/drawio:X.Y.Z`.
 2. In `startos/versions/current.ts`, set `version` to `X.Y.Z:0` and rewrite the
    release notes for the new range, linking the upstream releases page.
 3. Check the upstream entrypoint for changed environment variables before
