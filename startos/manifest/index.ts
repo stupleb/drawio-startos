@@ -13,7 +13,9 @@ export const manifest = setupManifest({
   volumes: ['startos'],
   images: {
     drawio: {
-      source: { dockerTag: 'jgraph/drawio:32.5.5' },
+      source: {
+        dockerBuild: { buildArgs: { IMAGE: 'jgraph/drawio:32.5.5' } },
+      },
       arch: ['x86_64', 'aarch64'],
     },
   },

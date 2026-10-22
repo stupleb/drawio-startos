@@ -1,18 +1,17 @@
 import { IMPOSSIBLE, VersionInfo } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '32.5.5:0',
+  version: '32.5.5:1',
   releaseNotes: {
     en_US:
-      'Updated draw.io to 32.5.5. Replace All now works across All Pages, and the SQL, animation, WebCola, Freemind import, F5 rack, flow and edge connection plugins are removed. Full list of changes: https://github.com/jgraph/drawio/blob/v32.5.5/ChangeLog',
+      'Stops trusting certificates from a compromised certificate authority (eMudhra).',
     es_ES:
-      'draw.io actualizado a 32.5.5. Reemplazar todo ahora funciona en Todas las páginas, y se eliminan los complementos SQL, animación, WebCola, importación de Freemind, rack F5, flujo y conexión de aristas. Lista completa de cambios: https://github.com/jgraph/drawio/blob/v32.5.5/ChangeLog',
+      'Deja de confiar en los certificados de una autoridad de certificación comprometida (eMudhra).',
     de_DE:
-      'draw.io auf 32.5.5 aktualisiert. Alle ersetzen funktioniert jetzt über Alle Seiten, und die Plugins SQL, Animation, WebCola, Freemind-Import, F5-Rack, Flow und Kantenverbindung wurden entfernt. Vollständige Liste der Änderungen: https://github.com/jgraph/drawio/blob/v32.5.5/ChangeLog',
+      'Vertraut Zertifikaten einer kompromittierten Zertifizierungsstelle (eMudhra) nicht mehr.',
     pl_PL:
-      'Zaktualizowano draw.io do 32.5.5. Zamień wszystkie działa teraz na Wszystkie strony, a wtyczki SQL, animacji, WebCola, importu Freemind, szafy F5, przepływu i połączeń krawędzi zostały usunięte. Pełna lista zmian: https://github.com/jgraph/drawio/blob/v32.5.5/ChangeLog',
-    fr_FR:
-      'draw.io mis à jour vers la version 32.5.5. Tout remplacer fonctionne désormais sur Toutes les pages, et les plugins SQL, animation, WebCola, import Freemind, baie F5, flux et connexion des liens sont supprimés. Liste complète des changements : https://github.com/jgraph/drawio/blob/v32.5.5/ChangeLog',
+      'Przestaje ufać certyfikatom przejętego urzędu certyfikacji (eMudhra).',
+    fr_FR: `Ne fait plus confiance aux certificats d'une autorité de certification compromise (eMudhra).`,
   },
   migrations: {
     up: async ({ effects }) => {},
