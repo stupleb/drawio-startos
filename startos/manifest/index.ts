@@ -14,7 +14,7 @@ export const manifest = setupManifest({
   images: {
     drawio: {
       source: {
-        dockerBuild: { buildArgs: { IMAGE: 'jgraph/drawio:32.6.1' } },
+        dockerBuild: { buildArgs: { IMAGE: 'jgraph/drawio:32.6.10' } },
       },
       arch: ['x86_64', 'aarch64'],
     },
